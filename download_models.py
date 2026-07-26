@@ -3,11 +3,11 @@ import os
 import gdown
 import torch
 
-from src.train_pipeline import DEFAULT_TARGET_COLUMNS, NutritionRegressor
+from src.models import DEFAULT_TARGET_COLUMNS, NutritionRegressor
 
 os.makedirs("weights", exist_ok=True)
 
-SEGMENTATION_URL = "https://drive.google.com/file/d/1CJFCMGUQ6PllitaXADLi-liXU2j80Ife/view?usp=drive_link"
+SEGMENTATION_URL = "https://drive.google.com/uc?id=1CJFCMGUQ6PllitaXADLi-liXU2j80Ife"
 SEGMENTATION_OUTPUT = "weights/segmentation_model.pth"
 NUTRITION_OUTPUT = "weights/nutrition_model.pth"
 
@@ -18,7 +18,7 @@ def ensure_segmentation_model(output_path: str) -> None:
         return
 
     print("Downloading segmentation model...")
-    gdown.download(SEGMENTATION_URL, output_path, fuzzy=True, quiet=False)
+    gdown.download(SEGMENTATION_URL, output_path, quiet=False)
 
     if not os.path.exists(output_path):
         raise RuntimeError("Segmentation model download failed!")
