@@ -1,0 +1,20 @@
+{
+  "name": "food_segmentation_training",
+  "image_dir": "images",
+  "mask_dir": "masks",
+  "label_columns": [
+    "image_path",
+    "mask_path",
+    "rice_staple",
+    "curry_gravy",
+    "vegetable",
+    "protein"
+  ],
+  "mask_values": {
+    "background": 0,
+    "rice_staple": 1,
+    "curry_gravy": 2,
+    "vegetable": 3,
+    "protein": 4
+  }
+}
