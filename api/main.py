@@ -8,8 +8,7 @@ from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from PIL import Image
 from torchvision import transforms
-
-from src.train_pipeline import DEFAULT_TARGET_COLUMNS, NutritionRegressor
+from src.models import DEFAULT_TARGET_COLUMNS, NutritionRegressor
 from src.segmentation_pipeline.infer import SegmentationNutritionPipeline
 
 logger = logging.getLogger(__name__)
