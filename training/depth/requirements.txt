@@ -1,0 +1,11 @@
+torch
+torchvision
+opencv-python
+numpy
+matplotlib
+pillow
+timm
+einops
+scipy
+huggingface_hub
+transformers

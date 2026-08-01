@@ -6,10 +6,34 @@ __pycache__/
 venv/
 .venv/
 
-# IDE
+# IDE & Configs
 .vscode/
+.env
 
 # OS
 .DS_Store
 Thumbs.db
-weights/*.pth
+
+# Heavy ML assets & Data
+weights/
+runs/
+datasets/
+assets/
+temp_uploads/
+# Ignore heavy raw USDA data and databases
+data/
+*.db
+*.sqlite
+*.csv
+*.json
+
+# Models, Weights & Training Runs
+runs/
+*.pt
+*.onnx
+
+# Environments & OS
+.venv/
+.env
+__pycache__/
+.DS_Store

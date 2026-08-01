@@ -1,3 +1,0 @@
-image_path,mask_path,rice_staple,curry_gravy,vegetable,protein
-images/sample_bowl_001.jpg,masks/sample_bowl_001.png,1,0,1,1
-images/sample_bowl_002.jpg,masks/sample_bowl_002.png,1,1,0,1

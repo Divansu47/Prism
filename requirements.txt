@@ -1,17 +1,38 @@
 --extra-index-url https://download.pytorch.org/whl/cpu
 
+# Core Numerical & Data Processing
 numpy==1.26.4
 pandas==2.0.3
+scipy
+matplotlib
 
+# Deep Learning Framework
 torch==2.6.0
 torchvision==0.21.0
 segmentation-models-pytorch==0.3.3
+timm
+transformers
 
+# YOLO Segmentation & Detection
+ultralytics
+
+# EasyOCR & Image Processing
+easyocr
 opencv-python-headless==4.8.0.76
 albumentations==1.3.0
+Pillow==10.0.0
 
+# Fuzzy Matching
+rapidfuzz
+Levenshtein
+
+# Google Gemini API (Using the unified modern SDK)
+google-genai
+
+# API Server & Utilities
 fastapi==0.104.1
 uvicorn==0.24.0
 python-multipart==0.0.6
-Pillow==10.0.0
+python-dotenv
+requests
 gdown==6.1.0
