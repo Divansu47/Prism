@@ -82,3 +82,4 @@ curl -X POST "https://food-nutrition-920479426497.asia-south1.run.app/analyze-fo
    git commit -m "docs: fix markdown formatting and code blocks in README"
    git push origin main
    ```
+   ---
