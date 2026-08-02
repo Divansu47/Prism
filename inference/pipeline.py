@@ -75,6 +75,8 @@ def get_segmenter():
     return _SEGMENTER_INSTANCE
 
 
+import PIL.Image
+
 def call_gemini_vision_api(image_path, current_guess):
     if client is None:
         print("\nGemini API client not initialized. Skipping fallback.")
@@ -89,7 +91,13 @@ def call_gemini_vision_api(image_path, current_guess):
                 "List the distinct visible food items in this meal tray separated strictly by commas "
                 "(e.g., Rice, Pinto Beans, Salsa, Roasted Potatoes, Salad). "
                 "Do NOT include introductory text, bullet points, or extra explanation. "
-                "Return ONLY the comma-separated names of the foods."
+                "Return ONLY the comma-separated names of the foods. "
+                # --- NEW APPENDED INSTRUCTION ---
+                "You are an expert nutritionist analyzing a meal tray"
+                "Additionally, determine an overall 'meal_name' that best describes the combined dish "
+                "(e.g., 'Burrito Bowl' if you see rice, beans, and salsa). "
+                "Prepend this meal name to your response, separated by a pipe character (|). "
+                "Exact output format required: Meal Name | Ingredient 1, Ingredient 2, Ingredient 3"
             )
         else:
             # Targeted prompt for single ingredient validation / correction
@@ -103,7 +111,7 @@ def call_gemini_vision_api(image_path, current_guess):
             )
             
         response = client.models.generate_content(
-            model="gemini-flash-latest",
+            model="gemini-3.5-flash",
             contents=[prompt, img]
         )
         return response.text.strip().lower()
@@ -236,6 +244,9 @@ def process_image(image_path: Path) -> dict:
         # If YOLO only segmented 1 box on a complex/multi-item dish and the 
         # dish classifier is uncertain (< 0.40), force Gemini full-tray analysis
         # ---------------------------------------------------------------------
+        # ---------------------------------------------------------------------
+        # MULTI-COMPARTMENT TRAY FALLBACK
+        # ---------------------------------------------------------------------
         dish_conf = dish_result.get("confidence", 0) if dish_result else 0
         if len(foods) <= 1 and dish_conf < 0.40:
             print("\n⚠️ Single/weak segmentation on a complex meal tray detected.")
@@ -243,16 +254,31 @@ def process_image(image_path: Path) -> dict:
             gemini_tray_items = call_gemini_vision_api(image_path, "complex_tray_breakdown")
             if gemini_tray_items:
                 print(f"   Gemini detected tray components: '{gemini_tray_items}'")
-                # Override the single poor box with Gemini's detailed items
+                
+                # --- SAFE PIPE & COMMA PARSING ---
+                if "|" in gemini_tray_items:
+                    override_meal_name, raw_ingredients = gemini_tray_items.split("|", 1)
+                    override_meal_name = override_meal_name.strip().title()
+                else:
+                    override_meal_name = None
+                    raw_ingredients = gemini_tray_items
+
+                ingredient_list = [item.strip() for item in raw_ingredients.split(",") if item.strip()]
+
+                # Override single poor box with Gemini's itemized components
                 foods = [{
-                    "class": item.strip(),
+                    "class": item,
                     "confidence": 0.95,
                     "pixel_area": (image_area * 0.20),
                     "avg_depth": 0.5,
                     "relative_volume": (image_area * 0.20) * 0.5,
                     "is_uncertain": False,
                     "uncertain_reason": "Gemini Multi-Compartment Tray Breakdown"
-                } for item in gemini_tray_items.split(",") if item.strip()]
+                } for item in ingredient_list]
+                
+                # Assign overriding meal name if present
+                if override_meal_name:
+                    dish_result["label"] = override_meal_name
                 
                 mismatch = False
                 mismatch_reason = None
